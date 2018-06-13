@@ -18,7 +18,27 @@ export default {
   components: {
     PostPreview
   },
-  data() {
+  // Accessing Storyblok npm module which is defined in nuxt.config.js under 'modules'
+  asyncData(context) {
+    return context.app.$storyapi
+      .get("cdn/stories", {
+        version: "draft",
+        starts_with: "blog/"
+      })
+      .then(res => {
+        return {
+          posts: res.data.stories.map(bp => {
+            return {
+              id: bp.slug,
+              title: bp.content.title,
+              previewText: bp.content.summary,
+              thumbnailUrl: bp.content.thumbnail
+            };
+          })
+        };
+      });
+  }
+  /* data() {
     return {
       posts: [
         {
@@ -37,7 +57,7 @@ export default {
         }
       ]
     };
-  }
+  } */
 };
 </script>
 
